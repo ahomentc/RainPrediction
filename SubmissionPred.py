@@ -15,9 +15,9 @@ Y_train = np.genfromtxt("Y_train.txt",delimiter=None)
 
 X_test = np.genfromtxt("X_test.txt",delimiter=None)
 
-X_train = np.delete(X_train,[0,2],1)
-X_test = np.delete(X_test,[0,2],1)
-clf = ExtraTreesRegressor(n_estimators=330, n_jobs=-1, min_samples_leaf=5)
+X_train = np.delete(X_train,[0],1)
+X_test = np.delete(X_test,[0],1)
+clf = ExtraTreesRegressor(n_estimators=700, n_jobs=-1, max_features=10, min_samples_leaf=4, max_depth=30) # was 3
 
 clf.fit(X_train, Y_train)
 

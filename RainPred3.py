@@ -43,23 +43,19 @@ X_train, X_test, Y_train, Y_test  = train_test_split(
 
 # -----
 
-# clf1 = RandomForestRegressor(n_estimators=320, n_jobs=-1, min_samples_leaf=3)
-# clf2 = ExtraTreesRegressor(n_estimators=330, n_jobs=-1, min_samples_leaf=5)
+# clf1 = RandomForestRegressor(n_estimators=300, n_jobs=-1, max_features=10, min_samples_leaf=4)
+# clf2 = ExtraTreesRegressor(n_estimators=330, n_jobs=-1, max_features=10, min_samples_leaf=4) # was 3
 
+# X_train = np.delete(X_train,[0],1)
+# X_test = np.delete(X_test,[0],1)
 
-# X_trainRandom = np.delete(X_train,[0],1)
-# X_testRandom = np.delete(X_test,[0],1)
-
-# X_trainExtra = np.delete(X_train,[0,2],1)
-# X_testExtra = np.delete(X_test,[0,2],1)
-
-# clf1.fit(X_trainRandom, Y_train)
-# clf2.fit(X_trainExtra, Y_train)
+# clf1.fit(X_train, Y_train)
+# clf2.fit(X_train, Y_train)
 
 # # training prediction
 # print("training prediction")
-# Ypred1 = clf1.predict(X_trainRandom)
-# Ypred2 = clf2.predict(X_trainExtra)
+# Ypred1 = clf1.predict(X_train)
+# Ypred2 = clf2.predict(X_train)
 # finalpred=(Ypred1+Ypred2)/2
 
 # auc = roc_auc_score(Y_train, finalpred)
@@ -67,34 +63,51 @@ X_train, X_test, Y_train, Y_test  = train_test_split(
 
 # # testing prediction
 # print("Testing prediction")
-# Ypred1 = clf1.predict(X_testRandom)
-# Ypred2 = clf2.predict(X_testExtra)
-# finalpred=(Ypred1+Ypred2)/2
 
-# auc = roc_auc_score(Y_test, finalpred)
+# preds = []
+
+# Ypred1 = clf1.predict(X_test)
+# Ypred2 = clf2.predict(X_test)
+
+# for i in range(len(Ypred1)):
+# 	pred1 = Ypred1[i]
+# 	pred2 = Ypred2[i]
+# 	if pred1 > .5 and pred2 > .5:
+# 		if pred1 > pred2:
+# 			Ypred2[i] = pred1
+# 	elif pred1 < .5 and pred2 < .5:
+# 		if pred1 < pred2:
+# 			Ypred2[i] = pred1
+# 	else:
+# 		Ypred2[i] = (Ypred1[i]+Ypred2[i])/2
+
+# auc = roc_auc_score(Y_test, Ypred2)
 # print("Testing auc: " + str(auc))
 
 
 
 # -------
 
-# X_train = np.delete(X_train,[0,2],1)
-# X_test = np.delete(X_test,[0,2],1)
-# clf = ExtraTreesRegressor(n_estimators=330, n_jobs=-1, min_samples_leaf=5)
+# need to get to .766 for top 10
+# need to gtet to .77 to win need to get to 
+
+X_train = np.delete(X_train,[0],1) # 2 and 11
+X_test = np.delete(X_test,[0,],1)
+clf = ExtraTreesRegressor(n_estimators=700, n_jobs=-1, max_features=10, min_samples_leaf=4, max_depth=30) # was 3
+
+# clfe = DecisionTreeRegressor(max_depth=6,min_samples_leaf=50,max_features=10)
+# clf = GradientBoostingRegressor(n_estimators=400, max_features=10, min_samples_leaf=50)
 
 # X_train = np.delete(X_train,[0],1)
 # X_test = np.delete(X_test,[0],1)
-clf = RandomForestRegressor(n_estimators=320, n_jobs=-1, max_features=5, min_samples_leaf=3)
+# clf = RandomForestRegressor(n_estimators=360, n_jobs=-1, max_features=9, min_samples_leaf=4)
 
 clf.fit(X_train, Y_train)
-print(clf.feature_importances_)
+# print(clf.feature_importances_)
 
 # training prediction
 print("training prediction")
 Ypred = clf.predict(X_train)
-
-mse = mean_squared_error(Y_train, Ypred)
-print("training mse: " + str(mse))
 
 auc = roc_auc_score(Y_train, Ypred)
 print("Training auc: " + str(auc))
@@ -102,9 +115,6 @@ print("Training auc: " + str(auc))
 # testing prediction
 print("Testing prediction")
 Ypred = clf.predict(X_test)
-
-mse = mean_squared_error(Y_test, Ypred)
-print("Testing mse: " + str(mse))
 
 auc = roc_auc_score(Y_test, Ypred)
 print("Testing auc: " + str(auc))
